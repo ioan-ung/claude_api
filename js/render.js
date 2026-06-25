@@ -47,54 +47,30 @@ window.ChatApp = window.ChatApp || {};
   // un container cu paragrafe de text + blocuri de cod evidențiate, fiecare
   // bloc de cod cu propriul buton de copiere.
   App.renderContent = function (container, text) {
-    container.innerHTML = '';
-    const regex = /```([a-zA-Z0-9_+-]*)\n?([\s\S]*?)```/g;
-    let lastIndex = 0;
-    let match;
-    let hasCode = false;
-
-    function appendText(chunk) {
-      if (!chunk) return;
-      const p = document.createElement('div');
-      p.className = 'text-part';
-      p.textContent = chunk;
-      container.appendChild(p);
-    }
-
-    while ((match = regex.exec(text)) !== null) {
-      hasCode = true;
-      appendText(text.slice(lastIndex, match.index));
-
-      const lang = match[1] || 'cod';
-      const code = match[2].replace(/\n$/, '');
-
-      const block = document.createElement('div');
-      block.className = 'code-block';
-
+    const html = marked.parse(text, {
+      breaks: true,
+      gfm: true
+    });
+    container.innerHTML = DOMPurify.sanitize(html);
+    container.querySelectorAll('pre code').forEach(function (block) {
+      const lang = block.className.replace('language-', '') || 'cod';
+      const code = block.textContent;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
       const header = document.createElement('div');
       header.className = 'code-block-header';
       const label = document.createElement('span');
       label.textContent = lang;
       header.appendChild(label);
-      const copyBtn = App.makeCopyButton(function () { return code; }, 'code-block-copy');
-      header.appendChild(copyBtn);
-      block.appendChild(header);
-
+      header.appendChild(App.makeCopyButton(function () { return code; }, 'code-block-copy'));
+      wrapper.appendChild(header);
       const pre = document.createElement('pre');
       pre.textContent = code;
-      block.appendChild(pre);
+      wrapper.appendChild(pre);
+      block.closest('pre').replaceWith(wrapper);
+    });
 
-      container.appendChild(block);
-      lastIndex = regex.lastIndex;
-    }
-
-    appendText(text.slice(lastIndex));
-
-    if (!hasCode) {
-      container.textContent = text;
-    }
-
-    return hasCode;
+    return container.querySelector('.code-block') !== null;
   };
 
   App.addMessage = function (role, text) {

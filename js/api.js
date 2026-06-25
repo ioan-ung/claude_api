@@ -14,7 +14,7 @@ window.ChatApp = window.ChatApp || {};
       },
       body: JSON.stringify({
         model: opts.model,
-        max_tokens: 1024,
+        max_tokens: 16000,
         messages: opts.messages
       })
     });

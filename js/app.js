@@ -63,7 +63,10 @@ window.ChatApp = window.ChatApp || {};
         pending.textContent = 'Eroare API: ' + (data.error.message || JSON.stringify(data.error));
       } else {
         const block = (data.content || []).find(function (b) { return b.type === 'text'; });
-        const reply = block ? block.text : '(fără răspuns text)';
+        let reply = block ? block.text : '(fără răspuns text)';
+        if (data.stop_reason === 'max_tokens') {
+          reply += '\n\n_[Răspuns întrerupt: s-a atins limita de tokeni (max_tokens). Cere „continuă" pentru rest.]_';
+        }
         pending.classList.remove('pending');
         pending.dataset.raw = reply;
         App.renderContent(pending, reply);
