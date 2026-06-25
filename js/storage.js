@@ -38,6 +38,6 @@ window.ChatApp = window.ChatApp || {};
   App.clearHistory = function () {
     App.state.history = [];
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-    App.els.messagesEl.innerHTML = '<p class="placeholder">Introdu cheia API mai sus, apoi scrie un mesaj.</p>';
+    App.els.messagesEl.innerHTML = '<p class="placeholder">Introdu cheia de acces mai sus, apoi scrie un mesaj.</p>';
   };
 })(window.ChatApp);
