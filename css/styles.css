@@ -38,13 +38,13 @@ body {
   background: #1c1c1a;
   color: #ECEAE3;
   margin: 0;
-  padding: 24px;
+  padding: 16px 24px;
   display: flex;
   justify-content: center;
 }
 .app {
   width: 100%;
-  max-width: 720px;
+  max-width: 960px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -93,8 +93,8 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 #messages {
   flex: 1;
-  min-height: 420px;
-  max-height: 60vh;
+  min-height: 520px;
+  max-height: 72vh;
   overflow-y: auto;
   border: 1px solid #444441;
   border-radius: 12px;
