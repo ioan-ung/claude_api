@@ -1,4 +1,38 @@
 * { box-sizing: border-box; }
+
+/* Poarta de parolă acoperă tot ecranul; cât timp body e .locked, restul e ascuns. */
+body.locked .app { display: none; }
+#gate {
+  position: fixed;
+  inset: 0;
+  background: #1c1c1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.gate-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 300px;
+  padding: 28px;
+  border: 1px solid #444441;
+  border-radius: 12px;
+  background: #181816;
+}
+.gate-box h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 500;
+}
+#gate-msg {
+  margin: 0;
+  font-size: 13px;
+  min-height: 16px;
+  color: #888780;
+}
 body {
   font-family: -apple-system, "Segoe UI", Arial, sans-serif;
   background: #1c1c1a;
