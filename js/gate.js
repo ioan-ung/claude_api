@@ -1,5 +1,5 @@
 // Poartă de parolă: acoperă pagina până când userul introduce parola corectă.
-// Parola se citește din fișierul password.txt (alături de index.html).
+// Parola e verificată server-side (api/auth.js), niciodată trimisă în clar către client.
 // Se încarcă primul, înaintea restului scripturilor.
 (function () {
   var overlay = document.getElementById('gate');
@@ -7,37 +7,34 @@
   var btn = document.getElementById('gate-btn');
   var msg = document.getElementById('gate-msg');
 
-  // Citim parola așteptată din fișier (o singură dată).
-  var expected = null;
-  fetch('password.txt', { cache: 'no-store' })
-    .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.text();
-    })
-    .then(function (text) {
-      expected = text.trim();
-    })
-    .catch(function (err) {
-      msg.textContent = 'Nu am putut citi fișierul cu parola: ' + err.message;
-      msg.style.color = '#F09595';
-    });
-
   function check() {
-    if (expected === null) {
-      msg.textContent = 'Parola încă se încarcă, mai încearcă o dată.';
-      msg.style.color = '#888780';
-      return;
-    }
-    if (input.value === expected) {
-      // Parolă corectă: ascundem poarta și deblocăm aplicația.
-      overlay.remove();
-      document.body.classList.remove('locked');
-    } else {
-      msg.textContent = 'Parolă greșită.';
-      msg.style.color = '#F09595';
-      input.value = '';
-      input.focus();
-    }
+    var password = input.value;
+    btn.disabled = true;
+
+    fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: password })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        btn.disabled = false;
+        if (data.ok) {
+          sessionStorage.setItem('gate-password', password);
+          overlay.remove();
+          document.body.classList.remove('locked');
+        } else {
+          msg.textContent = 'Parolă greșită.';
+          msg.style.color = '#F09595';
+          input.value = '';
+          input.focus();
+        }
+      })
+      .catch(function (err) {
+        btn.disabled = false;
+        msg.textContent = 'Eroare de rețea: ' + err.message;
+        msg.style.color = '#F09595';
+      });
   }
 
   btn.addEventListener('click', check);

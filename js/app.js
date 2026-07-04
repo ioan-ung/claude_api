@@ -4,24 +4,10 @@ window.ChatApp = window.ChatApp || {};
 
 (function (App) {
   App.state = {
-    history: [],
-    apiKey: ''
+    history: []
   };
 
   const els = App.els;
-
-  const SAVED_KEY = 'claude-api-key';
-  const savedKey = localStorage.getItem(SAVED_KEY) || '';
-  if (savedKey) {
-    els.apiKeyEl.value = savedKey;
-    App.state.apiKey = savedKey;
-  }
-
-  els.saveKeyBtn.addEventListener('click', function () {
-    const key = els.apiKeyEl.value.trim();
-    App.state.apiKey = key;
-    try { localStorage.setItem(SAVED_KEY, key); } catch (e) {}
-  });
 
   els.clearBtn.addEventListener('click', function () {
     App.clearHistory();
@@ -43,7 +29,6 @@ window.ChatApp = window.ChatApp || {};
 
     try {
       const data = await App.callClaude({
-        apiKey: App.state.apiKey,
         model: els.modelSelect.value,
         messages: App.state.history
       });
